@@ -1,0 +1,112 @@
+version: '3.7'
+services:
+  trino-coordinator:
+    image: 'trinodb/trino:latest'
+    hostname: trino-coordinator
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./etc:/etc/trino
+    networks:
+      - trino
+
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+    networks:
+      - trino
+
+  hive-metastore:
+    hostname: hive-metastore
+    image: 'apache/hive:4.0.0'
+    ports:
+      - 9083:9083
+    environment:
+      - IS_RESUME=true
+      - SERVICE_NAME=metastore 
+      - DB_DRIVER=postgres
+      - AWS_ACCESS_KEY_ID=loPc9XwzYQmtjAy8qW9O
+      - AWS_SECRET_KEY=aYPx94r1d4GJARuwkkLZXa7Y4MpUjQWIo6rXx4OA
+    volumes:
+      - ./conf/hive-site.xml:/opt/hive/conf/hive-site.xml:ro
+      - ./warehouse:/opt/hive/data/warehouse
+      - ./home-hive:/home/hive
+      - ./home-hive/postgresql-42.7.2.jar:/opt/hive/lib/postgresql-42.7.2.jar
+      
+      - ./home-hive/hadoop-auth-3.3.6.jar:/opt/hive/lib/hadoop-auth-3.3.6.jar
+      - ./home-hive/hadoop-common-3.3.6.jar:/opt/hive/lib/hadoop-common-3.3.6.jar
+      - ./home-hive/hadoop-aws-3.3.6.jar:/opt/hive/lib/hadoop-aws-3.3.6.jar
+      - ./home-hive/hadoop-shaded-guava-1.2.0.jar:/opt/hive/lib/hadoop-shaded-guava-1.2.0.jar
+      - ./home-hive/tez-api-0.10.3.jar:/opt/hive/lib/tez-api-0.10.3.jar
+      - ./home-hive/aws-java-sdk-bundle-1.12.99.jar:/opt/hive/lib/aws-java-sdk-bundle-1.12.99.jar
+      - ./home-hive/tez-common-0.10.3.jar:/opt/hive/lib/tez-common-0.10.3.jar
+      - ./home-hive/tez-dag-0.10.3.jar:/opt/hive/lib/tez-dag-0.10.3.jar
+      - ./home-hive/jaxb-api-2.2.11.jar:/opt/hive/lib/jaxb-api-2.2.11.jar
+      - ./home-hive/jaxb-impl-2.2.3-1.jar:/opt/hive/lib/jaxb-impl-2.2.3-1.jar
+      #postgresql-9.4.1208.jre7.jar
+    #entrypoint: >
+    #  /bin/sh -c "printenv"
+    #  /bin/sh -c "schematool -dbType postgres -initSchema --verbose"
+
+    depends_on:
+      - postgres
+      - minio
+    networks:
+      - trino
+
+  minio:
+    hostname: minio
+    restart: always
+    image: 'minio/minio:latest'
+    container_name: minio
+    ports:
+      - "9001:9001"
+      - "9000:9000"
+    command: [ "server", "/data", "--console-address", ":9001" ]
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    networks:
+      - trino
+
+  # To Create Minio bucket and upload iris parquet file.
+#  mc:
+#    depends_on:
+#      - minio
+#    image: minio/mc
+#    container_name: mc
+#    entrypoint: >
+#      /bin/sh -c "
+#      until (/usr/bin/mc config host add minio http://minio:9000 minio minio123) do echo '...waiting...' && sleep 1; done;
+#      /usr/bin/mc rm -r --force minio/iris;
+#      /usr/bin/mc mb minio/iris;
+#      /usr/bin/mc policy set public minio/iris;
+#      /usr/bin/mc cp /data/iris.parq minio/iris/iris.parq;
+#      exit 0;
+#      "
+#    networks:
+#      - trino
+#    volumes:
+#      - ./data/iris.parq:/data/iris.parq
+
+volumes:
+  minio-data:
+    driver: local
+  db:
+    driver: local
+
+networks:
+  trino:
+    driver: bridge
