@@ -1,58 +1,8 @@
 # Understaning Your Data Lakehouse
 
-Depending on your chosen directory of operating system, the following subdirectories and files contain:
+## Installing Docker Desktop on Your OS
 
-    conf: Contains configuration files.
-    data: Stores data files.
-    etc: Contains additional configuration files.
-    home-hive: Contains volumes for the hive-metastore container.
-    warehouse: Reserved for additional data storage.
-
-Additionally, your chosen OS directory includes the following files:
-
-  	docker-compose.yml: Runs containers using the "docker-compose up -d" command.
-  	pyTest.py: Runs the notebook container on the local host.
- 
-
-conf:
- 
-    hive-site.xml: Configuration file for Apache Hive, specifying settings such as metastore connection details, database configurations, and query execution parameters.
-    metastore-site.xml: Configuration file for the Hive Metastore service, defining properties related to database connections, authentication, and storage locations.
-    
-data:
-
-	iris.parq: Data file stored in MiniO.
-        
-etc/catalog:
-  
-	hive.properities: Configuration file specifying properties related to Hive Catalog, including storage formats, default database, and catalog implementation details.
- 
-	iceberg.properties: Configuration file for Apache Iceberg, containing settings for table management, partitioning, and metadata storage.
-	config.properties: General configuration file for the project, containing environment-specific settings such as server addresses, API keys, and service endpoints.
-	jvm.config: Java Virtual Machine configuration file, specifying JVM options such as heap size, garbage collection settings, and classpath definitions.
-	node properties: Configuration file containing properties related to cluster nodes, such as hostnames, IP addresses, and role assignments.
-        
-  home-hive:
-  
-	Contains volumes for the hive-metastore container.
-	
- warehouse:
- 
-	Reserved for additional data storage.
-
-Component Descriptions:
-
-    Minio: Handles large-scale data storage in an S3-compatible format.
-    Hive Metastore: Manages metadata for stored data, ensuring organized data retrieval.
-    Apache Iceberg: Provides advanced table format management, improving data access and query efficiency.
-    Trino: SQL query engine used for executing complex data analysis queries.
-    PostgreSQL: Serves as the backend for the Hive Metastore, storing metadata reliably.
-
-# Installation Guide
-
-## Installing Docker Desktop on your OS
-
-For Windows users: Although Docker is not natively supported on Windows, we can utilize Windows Subsystem for Linux (WSL2) to run Docker Desktop efficiently on Windows systems. This setup allows us to create a Linux-like environment where Docker can operate seamlessly.
+For Windows users, although Docker is not natively supported on Windows, we can utilize Windows Subsystem for Linux (WSL2) to run Docker Desktop efficiently on Windows systems. This setup allows us to create a Linux-like environment where Docker can operate seamlessly.
 
 ### Step 1: Enable Virtualization (Both Windows & macOS) 
 Before beginning, make sure virtualization is enabled in your computer's BIOS settings, which is essential for running Docker.
@@ -74,6 +24,61 @@ Agree to the terms, configure your preferences, and allow Docker to finalize the
 
 ### Step 5: Access Docker CLI (Both Windows & macOS)
 Docker CLI can be accessed by typing docker in your designated OS. This interface allows you to manage Docker containers, images, and more via command line.
+
+## Downloading the Data Lakehouse
+
+### Download this Repository to Your Local Machine
+This repository includes a README.md file and a Data-Lakehouse directory. Within the Data-Lakehouse directory, you'll find separate folders for macOS and Windows. Select the folder corresponding to your operating system, copy it to your desired location, then right-click and choose "Open in Terminal." Ignore the folder for the OS you're not using.
+
+Depending on your chosen directory of operating system, the following subdirectories and files contain:
+
+    conf: Contains configuration files.
+    data: Stores data files.
+    etc: Contains additional configuration files.
+    home-hive: Contains volumes for the hive-metastore container.
+    warehouse: Reserved for additional data storage.
+
+Additionally, your chosen OS directory includes the following files:
+
+  	docker-compose.yml: Runs containers using the "docker-compose up -d" command.
+  	pyTest.py: Runs the notebook container on the local host.
+ 
+conf:
+ 
+    hive-site.xml: Configuration file for Apache Hive, specifying settings such as metastore connection details, database configurations, and query execution parameters.
+    metastore-site.xml: Configuration file for the Hive Metastore service, defining properties related to database connections, authentication, and storage locations.
+    
+data:
+
+	iris.parq: Data file stored in MiniO.
+
+ etc:
+ 
+	catalog
+	config.properties: General configuration file for the project, containing environment-specific settings such as server addresses, API keys, and service endpoints.
+	jvm.config: Java Virtual Machine configuration file, specifying JVM options such as heap size, garbage collection settings, and classpath definitions.
+	node properties: Configuration file containing properties related to cluster nodes, such as hostnames, IP addresses, and role assignments.
+        
+etc/catalog:
+
+	hive.properities: Configuration file specifying properties related to Hive Catalog, including storage formats, default database, and catalog implementation details.
+	iceberg.properties: Configuration file for Apache Iceberg, containing settings for table management, partitioning, and metadata storage.
+        
+  home-hive:
+  
+	Contains volumes for the hive-metastore container.
+	
+ warehouse:
+ 
+	Reserved for additional data storage.
+
+Component Descriptions:
+
+    Minio: Handles large-scale data storage in an S3-compatible format.
+    Hive Metastore: Manages metadata for stored data, ensuring organized data retrieval.
+    Apache Iceberg: Provides advanced table format management, improving data access and query efficiency.
+    Trino: SQL query engine used for executing complex data analysis queries.
+    PostgreSQL: Serves as the backend for the Hive Metastore, storing metadata reliably.
 
 ## Running Containers with Docker Compose
 
@@ -143,9 +148,9 @@ Start a Docker container with a bash shell:
 	  schematool -dbType postgres -initSchema
 
 
-### Creating Schemas and Tables
+## Creating Schemas and Tables
 
-To create schemas in Trino for data storage, use the following SQL commands:
+### To create schemas in Trino for data storage, use the following SQL commands:
 
 	CREATE SCHEMA IF NOT EXISTS iris.default WITH (location = 's3a://iris/');
 	CREATE SCHEMA IF NOT EXISTS iceberg.iris WITH (location = 's3a://iris/');
@@ -153,9 +158,9 @@ To create schemas in Trino for data storage, use the following SQL commands:
 	CREATE SCHEMA IF NOT EXISTS hive.fdep WITH (location = 's3a://fdep/');
 
 
-To create tables in Trino, use SQL `CREATE TABLE` statements. Here are examples:
+## To create tables in Trino, use SQL "CREATE TABLE" statements. Here are examples:
 
-Iceberg Table Creation:
+### Iceberg Table Creation:
 
 	CREATE TABLE IF NOT EXISTS iceberg.iris.iris_parquet (
 	    sepal_length DOUBLE,
@@ -165,7 +170,7 @@ Iceberg Table Creation:
 	    class        VARCHAR
 	) WITH (location = 's3a://iris/iris.parq', format = 'PARQUET');
 
-Hive Table Creation
+### Hive Table Creation
 
 	CREATE TABLE IF NOT EXISTS hive.iris.iris_parquet (
 	    sepal_length DOUBLE,
@@ -175,7 +180,7 @@ Hive Table Creation
 	    class        VARCHAR
 	) WITH (external_location = 's3a://iris/iris.parq', format = 'PARQUET');
 
-External Table Creation
+### External Table Creation
 
 	CREATE EXTERNAL TABLE iris_parquet (
 	    sepal_length DOUBLE,
@@ -184,6 +189,30 @@ External Table Creation
 	    petal_width  DOUBLE,
 	    class        VARCHAR
 	) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION 's3a://iris/';
+ 
+	CREATE SCHEMA IF NOT EXISTS hive.fdep WITH (location = 's3a://fdep/');
+
+## Running the Notebook Container:
+
+Run the command, then access the images's GUI via Docker Desktop:
+
+	docker run -p 8888:8888 --network fiu-lake_trino quay.io/jupyter/scipy-notebook:2024-03-14 
+ 
+Open the terminal and install pip, using the following command:
+
+	pip install trino
+
+Now, you are able to run the Python notebook to retrieve vast amounts of data. For example, this command: 
+
+	from trino.dbapi import connect
+	conn = connect(host="fiu-lake-trino-coordinator-1", port=8080, user="test2", catalog="hive", schema="iris")
+	cur = conn.cursor()
+	cur.execute("select * from iris_parquet2 where sepal_length>5")
+	rows = cur.fetchall()
+	print(rows)
+
+
+
 
 
 
