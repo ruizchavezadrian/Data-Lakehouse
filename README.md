@@ -1,4 +1,4 @@
-### SecureHeaven - Project Overview
+# SecureHeaven - Project Overview
 
 SecureHeaven is a collaborative senior design project developed by Abdulelah Alasmari, Adrian Ruiz, and Danay Rumbaut during the Spring 2024 semester at Florida International University. The project was completed under the guidance of Professor Leonardo Bobadilla and Professor Seyedmasoud Sadjadi from the Knight Foundation School of Computing and Information Sciences.
 
