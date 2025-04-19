@@ -1,4 +1,14 @@
-# Understaning Your Data Lakehouse
+### SecureHeaven - Project Overview
+
+SecureHeaven is a collaborative senior design project developed by Abdulelah Alasmari, Adrian Ruiz, and Danay Rumbaut during the Spring 2024 semester at Florida International University. The project was completed under the guidance of Professor Leonardo Bobadilla and Professor Seyedmasoud Sadjadi from the Knight Foundation School of Computing and Information Sciences.
+
+SecureHeaven (SH) is a Data Lakehouse solution designed to follow the FAIR principles in managing and sharing scientific data. By leveraging robust metadata management, SH enhances data discoverability and usability while addressing the limitations of traditional systems in handling diverse research data.
+
+We are grateful to our mentors for their invaluable support throughout the development process.
+
+**Project Link:** [SecureHeaven on FIU Server](https://users.cis.fiu.edu/~sadjadi/Teaching/SeniorProject/Deliverables/241-SP24/CY-02-SecureHaven.zip)
+ 
+## Understanding Our Data Lakehouse
 
 ## Installing Docker Desktop on Your OS
 
